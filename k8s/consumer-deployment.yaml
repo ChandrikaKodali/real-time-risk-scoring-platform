@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: risk-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: risk-consumer
+  template:
+    metadata:
+      labels:
+        app: risk-consumer
+    spec:
+      containers:
+        - name: risk-consumer
+          image: risk-scoring-api:latest
+          command:
+            - python
+            - -m
+            - kafka_service.consumer
+          envFrom:
+            - configMapRef:
+                name: risk-scoring-config

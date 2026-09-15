@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: risk-scoring-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: risk-scoring-api
+  template:
+    metadata:
+      labels:
+        app: risk-scoring-api
+    spec:
+      containers:
+        - name: risk-scoring-api
+          image: risk-scoring-api:latest
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: risk-scoring-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: risk-scoring-api
+spec:
+  selector:
+    app: risk-scoring-api
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: NodePort

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: risk-scoring-config
+data:
+  DATABASE_URL: "postgresql://riskuser:riskpassword@risk-postgres:5432/riskdb"
+  KAFKA_BOOTSTRAP_SERVERS: "risk-kafka:29092"
+  REDIS_HOST: "risk-redis"
+  REDIS_PORT: "6379"

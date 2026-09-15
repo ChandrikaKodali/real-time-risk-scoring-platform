@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: risk-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: risk-postgres
+  template:
+    metadata:
+      labels:
+        app: risk-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "riskuser"
+            - name: POSTGRES_PASSWORD
+              value: "riskpassword"
+            - name: POSTGRES_DB
+              value: "riskdb"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: risk-postgres
+spec:
+  selector:
+    app: risk-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
