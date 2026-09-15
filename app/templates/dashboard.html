@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Risk Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .header {
+            background: #0f172a;
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .header span {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: #64748b;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        .card h3 {
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .button {
+            width: 100%;
+            margin-top: 22px;
+            padding: 14px;
+            background: #2563eb;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .button:hover {
+            background: #1d4ed8;
+        }
+
+        .result {
+            display: none;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 52px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .risk-level {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .low {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .reasons {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .reasons li {
+            margin: 8px 0;
+            color: #475569;
+        }
+
+        .no-reason {
+            color: #16a34a;
+        }
+
+        @media (max-width: 700px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>RiskGuard</h1>
+        <span>Real-Time Risk Scoring Platform</span>
+    </div>
+
+    <div class="container">
+
+        <div class="welcome">
+            <h2>Risk Monitoring Dashboard</h2>
+            <p>Analyze financial transactions and identify potential risk.</p>
+        </div>
+
+        <div class="card">
+
+            <h3>Transaction Analysis</h3>
+
+            <div class="form-grid">
+
+                <div class="field">
+                    <label>Transaction ID</label>
+                    <input type="text" id="transaction_id" placeholder="e.g. TXN1001">
+                </div>
+
+                <div class="field">
+                    <label>User ID</label>
+                    <input type="text" id="user_id" placeholder="e.g. USER001">
+                </div>
+
+                <div class="field">
+                    <label>Amount</label>
+                    <input type="number" id="amount" placeholder="Enter amount">
+                </div>
+
+                <div class="field">
+                    <label>Failed Attempts</label>
+                    <input type="number" id="failed_attempts" value="0">
+                </div>
+
+                <div class="field">
+                    <label>Transactions in Last Minute</label>
+                    <input type="number" id="transactions_last_minute" value="0">
+                </div>
+
+            </div>
+
+            <button class="button" onclick="analyzeRisk()">
+                Analyze Transaction
+            </button>
+
+        </div>
+
+        <div class="card result" id="result">
+
+            <h3>Risk Assessment</h3>
+
+            <div class="score" id="score">0</div>
+
+            <div class="risk-level" id="riskLevel">
+                LOW
+            </div>
+
+            <div class="reasons">
+
+                <h3>Risk Factors</h3>
+
+                <ul id="reasons"></ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        function analyzeRisk() {
+
+            const amount = Number(document.getElementById("amount").value);
+            const failedAttempts =
+                Number(document.getElementById("failed_attempts").value);
+
+            const transactions =
+                Number(document.getElementById("transactions_last_minute").value);
+
+            if (!amount) {
+                alert("Please enter a transaction amount.");
+                return;
+            }
+
+            let score = 0;
+            let reasons = [];
+
+            if (amount > 50000) {
+                score += 40;
+                reasons.push("High transaction amount");
+            }
+
+            if (transactions >= 5) {
+                score += 30;
+                reasons.push("Too many transactions in one minute");
+            }
+
+            if (failedAttempts >= 3) {
+                score += 20;
+                reasons.push("Multiple failed attempts");
+            }
+
+            score = Math.min(score, 100);
+
+            let level = "LOW";
+
+            if (score >= 70) {
+                level = "HIGH";
+            } else if (score >= 40) {
+                level = "MEDIUM";
+            }
+
+            document.getElementById("result").style.display = "block";
+
+            document.getElementById("score").textContent =
+                score;
+
+            const riskLevel =
+                document.getElementById("riskLevel");
+
+            riskLevel.textContent = level;
+
+            riskLevel.className =
+                "risk-level " + level.toLowerCase();
+
+            const reasonsList =
+                document.getElementById("reasons");
+
+            reasonsList.innerHTML = "";
+
+            if (reasons.length === 0) {
+
+                const li = document.createElement("li");
+
+                li.textContent = "No significant risk factors detected.";
+
+                li.className = "no-reason";
+
+                reasonsList.appendChild(li);
+
+            } else {
+
+                reasons.forEach(reason => {
+
+                    const li =
+                        document.createElement("li");
+
+                    li.textContent = reason;
+
+                    reasonsList.appendChild(li);
+
+                });
+
+            }
+        }
+
+    </script>
+
+</body>
+</html>

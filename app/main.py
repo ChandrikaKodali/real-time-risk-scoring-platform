@@ -6,8 +6,14 @@ from kafka_service.producer import send_transaction
 from app.redis_client import get_risk
 
 
-app = FastAPI(title="Real-Time Risk Scoring Platform")
+app = FastAPI(
+    title="Real-Time Risk Scoring Platform"
+)
 
+
+# -----------------------------
+# Transaction Request Model
+# -----------------------------
 
 class TransactionRequest(BaseModel):
     transaction_id: str
@@ -17,6 +23,10 @@ class TransactionRequest(BaseModel):
     transactions_last_minute: int = 0
 
 
+# -----------------------------
+# Home
+# -----------------------------
+
 @app.get("/")
 def home():
     return {
@@ -24,13 +34,36 @@ def home():
     }
 
 
+# -----------------------------
+# Login Page
+# -----------------------------
+
 @app.get("/login")
 def login_page():
-    return FileResponse("app/templates/login.html")
+    return FileResponse(
+        "app/templates/login.html"
+    )
 
+
+# -----------------------------
+# Dashboard Page
+# -----------------------------
+
+@app.get("/dashboard")
+def dashboard_page():
+    return FileResponse(
+        "app/templates/dashboard.html"
+    )
+
+
+# -----------------------------
+# Send Transaction
+# -----------------------------
 
 @app.post("/risk-score")
-def send_risk_event(transaction: TransactionRequest):
+def send_risk_event(
+    transaction: TransactionRequest
+):
 
     transaction_data = transaction.model_dump()
 
@@ -42,8 +75,14 @@ def send_risk_event(transaction: TransactionRequest):
     }
 
 
+# -----------------------------
+# Get Risk Result
+# -----------------------------
+
 @app.get("/risk/{transaction_id}")
-def get_risk_score(transaction_id: str):
+def get_risk_score(
+    transaction_id: str
+):
 
     risk = get_risk(transaction_id)
 
