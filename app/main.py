@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from kafka_service.producer import send_transaction
@@ -21,6 +22,11 @@ def home():
     return {
         "message": "Risk Scoring API is running"
     }
+
+
+@app.get("/login")
+def login_page():
+    return FileResponse("app/templates/login.html")
 
 
 @app.post("/risk-score")
